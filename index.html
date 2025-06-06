@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi Mejor Amiga ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="definekari.jpg" type="image/png">
+</head>
+<body>
+
+    <header>
+        <h1>Elige tu Aventura</h1>
+        <p>Desliza para explorar nuestros momentos y juegos.</p>
+    </header>
+
+    <main class="carousel-wrapper">
+        <div class="carousel-container">
+            <div class="carousel-track">
+                
+                <div class="carousel-slide" data-juego="rompecabezas">
+                    <div class="slide-content">
+                        <div class="slide-icono">🧩</div>
+                        <h2>Rompecabezas</h2>
+                        <p>Arma una foto secreta.</p>
+                        <button class="boton-jugar" data-juego="rompecabezas">Jugar</button>
+                    </div>
+                </div>
+
+                <div class="carousel-slide" data-juego="memorama">
+                    <div class="slide-content">
+                        <div class="slide-icono">🧠</div>
+                        <h2>Memorama</h2>
+                        <p>Encuentra los pares.</p>
+                        <button class="boton-jugar" data-juego="memorama">Jugar</button>
+                    </div>
+                </div>
+
+                <div class="carousel-slide" data-juego="sopa-letras">
+                    <div class="slide-content">
+                        <div class="slide-icono">✍️</div>
+                        <h2>Sopa de Letras</h2>
+                        <p>Busca palabras secretas.</p>
+                        <button class="boton-jugar" data-juego="sopa-letras">Jugar</button>
+                    </div>
+                </div>
+
+                <div class="carousel-slide" data-juego="laberinto">
+                    <div class="slide-content">
+                        <div class="slide-icono">🗺️</div>
+                        <h2>Laberinto</h2>
+                        <p>Encuéntrame.</p>
+                        <button class="boton-jugar" data-juego="laberinto">Jugar</button>
+                    </div>
+                </div>
+
+                <div class="carousel-slide" data-juego="historia">
+                    <div class="slide-content">
+                        <div class="slide-icono">😂</div>
+                        <h2>Nuestra Historia</h2>
+                        <p>El "Cuervo-Gato".</p>
+                        <button class="boton-jugar" data-juego="historia">Jugar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <button class="carousel-button prev">‹</button>
+        <button class="carousel-button next">›</button>
+
+    </main>
+    <div class="secciones-extra">
+        <section id="galeria-seccion">
+            <h2>🏆 Galería de Recompensas 🏆</h2>
+            <p>Por cada juego que completes, desbloquearás un video especial aquí.</p>
+            <div id="galeria-videos"></div>
+        </section>
+
+        <section id="playlist-seccion">
+            <h2>Nuestra Playlist de la Amistad 🎶</h2>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/playlist/2fWWkiW2wIMCH28fBclL4e?si=HHxwS38LTe6kIlIxdz0P9w&pt=9eebf3dc86cc37c26659d6d3fbc10926" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </section>
+
+        <section id="cumplidos-seccion">
+            <h2>Un Mensaje Para Ti ✨</h2>
+            <p>Porque te mereces que te lo recuerden siempre.</p>
+            <button id="boton-cumplido">Presiona para leer algo bonito</button>
+            <div id="mensaje-cumplido"><p></p></div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Hecho con mucho cariño para la mejor amiga del mundo ❤️</p>
+    </footer>
+
+    <div id="modal-juego" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar-modal">×</span>
+            <div id="contenedor-juego-modal"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
