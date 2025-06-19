@@ -347,3 +347,57 @@ document.addEventListener('DOMContentLoaded', function() {
     moverSlide(0);
     actualizarCandadosCarrusel();
 })
+/* ============================================== */
+/* === NUEVOS ESTILOS PARA EL ROMPECABEZAS v2 === */
+/* ============================================== */
+
+.puzzle-v2-area {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+#puzzle-panel-izquierdo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#puzzle-contador {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-principal);
+    background: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+#piezas-stack {
+    width: 170px;
+    height: 170px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    position: relative; /* Clave para apilar las piezas */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+}
+
+#piezas-stack .puzzle-pieza {
+    /* Todas las piezas estarán una encima de otra */
+    position: absolute;
+    /* Ocultas por defecto */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+#piezas-stack .pieza-activa {
+    /* La pieza activa se hace visible */
+    opacity: 1;
+    visibility: visible;
+    z-index: 100;
+}
