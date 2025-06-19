@@ -1,7 +1,6 @@
-// Este código se ejecuta cuando toda la página HTML se ha cargado.
 document.addEventListener('DOMContentLoaded', function() {
 
-    // --- OBJETOS Y VARIABLES PRINCIPALES ---
+    // --- CONFIGURACIÓN PRINCIPAL ---
     var juegos = {
         rompecabezas: { completado: false, bloqueado: false },
         memorama: { completado: false, bloqueado: true },
@@ -15,20 +14,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var contenedorJuegoModal = document.getElementById('contenedor-juego-modal');
     var cerrarModalBtn = document.querySelector('.cerrar-modal');
 
-    // --- VIDEOS DE RECOMPENSA ---
+    // --- PERSONALIZACIÓN DE RECOMPENSAS Y TEXTOS ---
     var videos = {
-        // REEMPLAZA ESTAS URLS CON LAS DE TUS VIDEOS
-        rompecabezas: 'kari.mp4',
-        memorama: 'kari.mp4',
-        'sopa-letras': 'kari.mp4',
-        laberinto: 'kari.mp4',
-        historia: 'kari.mp4'
+        rompecabezas: 'nosotroskari.jpg',
+        memorama: 'nosotroskari.jpg',
+        'sopa-letras': 'nosotroskari.jpg',
+        laberinto: 'nosotroskari.jpg',
+        historia: 'nosotroskari.jpg'
     };
-
-    // --- CUMPLIDOS ---
     var cumplidos = [
-        // REEMPLAZA O AÑADE TUS PROPIOS CUMPLIDOS
-        "Gracias por ser la persona más increíble que conozco.",
+        "Gracias por ser la persona más increíble que conozco, Kari.",
         "Admiro tu fuerza y tu capacidad para nunca rendirte.",
         "Tu risa es mi sonido favorito en todo el mundo."
     ];
@@ -42,41 +37,31 @@ document.addEventListener('DOMContentLoaded', function() {
     var currentIndex = 0;
 
     function moverSlide(targetIndex) {
+        if (!slides.length) return;
         var slideAncho = slides[0].getBoundingClientRect().width;
-        var margen = 20; // El margen entre slides
+        var margen = 20;
         var movimiento = (slideAncho + margen * 2) * targetIndex;
-        
         var wrapperAncho = document.querySelector('.carousel-wrapper').clientWidth;
         var offset = (wrapperAncho - slideAncho) / 2;
-
         track.style.transform = 'translateX(-' + (movimiento - offset) + 'px)';
-
         slides.forEach(function(slide) { slide.classList.remove('active'); });
         slides[targetIndex].classList.add('active');
         currentIndex = targetIndex;
         actualizarCandadosCarrusel();
     }
-
-    nextButton.addEventListener('click', function() {
-        if (currentIndex < slides.length - 1) { moverSlide(currentIndex + 1); }
-    });
-
-    prevButton.addEventListener('click', function() {
-        if (currentIndex > 0) { moverSlide(currentIndex - 1); }
-    });
+    if (nextButton) { nextButton.addEventListener('click', function() { if (currentIndex < slides.length - 1) { moverSlide(currentIndex + 1); } }); }
+    if (prevButton) { prevButton.addEventListener('click', function() { if (currentIndex > 0) { moverSlide(currentIndex - 1); } }); }
     
-    // --- LÓGICA DE BLOQUEO Y DESBLOQUEO ---
+    // --- LÓGICA DE BLOQUEO Y JUEGOS ---
     function actualizarCandadosCarrusel() {
         slides.forEach(function(slide) {
             var idJuego = slide.dataset.juego;
             var juego = juegos[idJuego];
-            
             if (!slide.querySelector('.slide-candado')) {
                 var candadoDiv = document.createElement('div');
                 candadoDiv.className = 'slide-candado';
                 slide.appendChild(candadoDiv);
             }
-            
             var candado = slide.querySelector('.slide-candado');
             if (juego.bloqueado) {
                 candado.classList.add('visible');
@@ -90,28 +75,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function juegoCompletado(idJuego) {
         if (!juegos[idJuego].completado) {
             juegos[idJuego].completado = true;
-            
             var indiceActual = ordenJuegos.indexOf(idJuego);
             if (indiceActual < ordenJuegos.length - 1) {
-                var siguienteJuegoId = ordenJuegos[indiceActual + 1];
-                juegos[siguienteJuegoId].bloqueado = false;
+                juegos[ordenJuegos[indiceActual + 1]].bloqueado = false;
             }
-
             desbloquearVideo(idJuego);
             actualizarCandadosCarrusel();
             cerrarModal();
             alert('¡Felicidades! ¡Has completado el juego y desbloqueado una recompensa!');
         }
     }
-    
+
     function desbloquearVideo(idJuego) {
         var galeria = document.getElementById('galeria-videos');
         var videoURL = videos[idJuego];
         if (videoURL && galeria) {
-            var videoElement = document.createElement('video');
-            videoElement.src = videoURL;
-            videoElement.controls = true;
-            galeria.appendChild(videoElement);
+            // Como ahora usamos una imagen, creamos un elemento <img> en lugar de <video>
+            var imgElement = document.createElement('img');
+            imgElement.src = videoURL;
+            imgElement.style.width = '100%'; // Para que se ajuste bien
+            imgElement.style.borderRadius = '10px';
+            galeria.appendChild(imgElement);
         }
     }
     
@@ -127,32 +111,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    if(cerrarModalBtn) cerrarModalBtn.addEventListener('click', cerrarModal);
-    window.addEventListener('click', function(event) { if (event.target == modal) { cerrarModal(); }});
+    if (cerrarModalBtn) cerrarModalBtn.addEventListener('click', cerrarModal);
+    window.addEventListener('click', function(event) { if (event.target == modal) { cerrarModal(); } });
 
     function abrirModalConJuego(idJuego) {
-        if (!modal || !contenedorJuegoModal) return;
+        if (!modal || !contenedorJuegoModal) { return; }
         contenedorJuegoModal.innerHTML = '';
-        
-        var juegoIniciado = false;
-        if (idJuego === 'rompecabezas') { iniciarRompecabezas(); juegoIniciado = true; }
-        else if (idJuego === 'memorama') { iniciarMemorama(); juegoIniciado = true; }
-        else if (idJuego === 'historia') { iniciarHistoria(); juegoIniciado = true; }
-        
-        if (juegoIniciado) {
+
+        var juegoTieneLogica = false;
+        if (idJuego === 'rompecabezas') { iniciarRompecabezas(); juegoTieneLogica = true; }
+        else if (idJuego === 'memorama') { iniciarMemorama(); juegoTieneLogica = true; }
+        else if (idJuego === 'historia') { iniciarHistoria(); juegoTieneLogica = true; }
+        else if (idJuego === 'sopa-letras') { iniciarSopaDeLetras(); }
+        else if (idJuego === 'laberinto') { iniciarLaberinto(); }
+
+        if (juegoTieneLogica) {
             modal.style.display = 'block';
-        } else {
-            alert('Este juego se completará automáticamente. ¡Felicidades!');
-            juegoCompletado(idJuego);
         }
     }
 
-    function cerrarModal() {
-        if(modal) {
-            modal.style.display = 'none';
-            contenedorJuegoModal.innerHTML = '';
-        }
-    }
+    function cerrarModal() { if (modal) { modal.style.display = 'none'; contenedorJuegoModal.innerHTML = ''; } }
     
     // --- GENERADOR DE CUMPLIDOS ---
     var botonCumplido = document.getElementById('boton-cumplido');
@@ -165,91 +143,103 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==========================================================
-    // === LÓGICA DE CADA JUEGO (COMPLETA) ===
+    // === LÓGICA DE CADA JUEGO (COMPLETA Y CORREGIDA) ===
     // ==========================================================
     
     function iniciarRompecabezas() {
-        // ========== ¡¡¡MODIFICA ESTA LÍNEA!!! ==========
         var imagenSrc = 'nosotroskari.jpg';
-        // ===============================================
-        var filas = 4; 
-        var columnas = 4;
+        var filas = 3;
+        var columnas = 3;
+        var totalPiezas = filas * columnas;
+        var piezasColocadas = 0;
+        var piezaActivaArrastrable = null;
+        var piezasBarajadas = [];
+        var piezaActualIndex = 0;
 
-        var html = '<div class="puzzle-area"><h2>¡Arma la foto!</h2><div class="puzzle-contenedor"><div id="puzzle-tablero"></div><div id="piezas-contenedor"></div></div></div>';
+        var html = '<h2>Rompecabezas por Piezas</h2><div class="puzzle-v2-area"><div id="puzzle-panel-izquierdo"><div id="puzzle-contador">0/' + totalPiezas + ' piezas</div><div id="piezas-stack"></div></div><div id="puzzle-tablero"></div></div>';
         contenedorJuegoModal.innerHTML = html;
 
         var tablero = document.getElementById('puzzle-tablero');
-        var contenedorPiezas = document.getElementById('piezas-contenedor');
+        var stack = document.getElementById('piezas-stack');
+        var contador = document.getElementById('puzzle-contador');
         
         setTimeout(function() {
-            var anchoTablero = tablero.clientWidth; 
+            var anchoTablero = tablero.clientWidth;
             var altoTablero = tablero.clientHeight;
-            var anchoPieza = anchoTablero / columnas; 
+            var anchoPieza = anchoTablero / columnas;
             var altoPieza = altoTablero / filas;
-            var piezas = []; 
-            var piezaActiva = null;
 
             for (var i = 0; i < filas; i++) {
                 for (var j = 0; j < columnas; j++) {
                     var pieza = document.createElement('div');
-                    pieza.draggable = true; 
                     pieza.classList.add('puzzle-pieza');
-                    
                     pieza.style.width = anchoPieza + 'px';
                     pieza.style.height = altoPieza + 'px';
                     pieza.style.backgroundImage = "url('" + imagenSrc + "')";
                     pieza.style.backgroundSize = anchoTablero + 'px ' + altoTablero + 'px';
                     pieza.style.backgroundPosition = '-' + (j * anchoPieza) + 'px -' + (i * altoPieza) + 'px';
-                    
-                    pieza.dataset.ordenCorrecto = i + '-' + j;
-                    piezas.push(pieza);
+                    pieza.dataset.filaCorrecta = i;
+                    pieza.dataset.columnaCorrecta = j;
+                    piezasBarajadas.push(pieza);
                 }
             }
 
-            piezas.sort(function() { return Math.random() - 0.5 }).forEach(function(p) { contenedorPiezas.appendChild(p);});
+            piezasBarajadas.sort(function() { return Math.random() - 0.5; });
+            piezasBarajadas.forEach(function(p) { stack.appendChild(p); });
+            mostrarSiguientePieza();
 
-            document.addEventListener('dragstart', function(e) { if (e.target.classList.contains('puzzle-pieza')) { piezaActiva = e.target; }});
-            tablero.addEventListener('dragover', function(e) { e.preventDefault(); });
-            tablero.addEventListener('drop', function(e) {
-                e.preventDefault();
-                if (piezaActiva) {
-                    var col = Math.floor(e.offsetX / anchoPieza);
-                    var fil = Math.floor(e.offsetY / altoPieza);
-                    var ordenActual = fil + '-' + col;
+        }, 100);
+
+        function mostrarSiguientePieza() {
+            if (piezaActualIndex < totalPiezas) {
+                var piezaAMostrar = piezasBarajadas[piezaActualIndex];
+                piezaAMostrar.classList.add('pieza-activa');
+                piezaAMostrar.draggable = true;
+            }
+        }
+
+        document.addEventListener('dragstart', function(e) { if (e.target.classList.contains('pieza-activa')) { piezaActivaArrastrable = e.target; }});
+        tablero.addEventListener('dragover', function(e) { e.preventDefault(); });
+        tablero.addEventListener('drop', function(e) {
+            e.preventDefault();
+            if (piezaActivaArrastrable) {
+                var filaSoltada = Math.floor(e.offsetY / (tablero.clientHeight / filas));
+                var colSoltada = Math.floor(e.offsetX / (tablero.clientWidth / columnas));
+
+                if (piezaActivaArrastrable.dataset.filaCorrecta == filaSoltada && piezaActivaArrastrable.dataset.columnaCorrecta == colSoltada) {
+                    var piezaCorrecta = piezaActivaArrastrable;
+                    piezaCorrecta.classList.remove('pieza-activa');
+                    piezaCorrecta.style.position = 'absolute';
+                    piezaCorrecta.style.left = (colSoltada * (tablero.clientWidth / columnas)) + 'px';
+                    piezaCorrecta.style.top = (filaSoltada * (tablero.clientHeight / filas)) + 'px';
+                    piezaCorrecta.draggable = false;
+                    tablero.appendChild(piezaCorrecta);
                     
-                    if (piezaActiva.dataset.ordenCorrecto === ordenActual) {
-                        piezaActiva.style.position = 'absolute';
-                        piezaActiva.style.left = (col * anchoPieza) + 'px';
-                        piezaActiva.style.top = (fil * altoPieza) + 'px';
-                        piezaActiva.draggable = false;
-                        tablero.appendChild(piezaActiva);
-                        if (tablero.children.length === (filas * columnas)) {
-                            juegoCompletado('rompecabezas');
-                        }
+                    piezasColocadas++;
+                    contador.textContent = piezasColocadas + '/' + totalPiezas + ' piezas';
+                    piezaActualIndex++;
+                    mostrarSiguientePieza();
+                    
+                    if (piezasColocadas === totalPiezas) {
+                        juegoCompletado('rompecabezas');
                     }
                 }
-            });
-        }, 100);
+                piezaActivaArrastrable = null;
+            }
+        });
     }
 
     function iniciarMemorama() {
-        // ========== ¡¡¡MODIFICA ESTAS LÍNEAS!!! ==========
-        var imagenes = [
-            'karipelo.jpg', 'anciano.jpg',
-            'nosotroskari.jpg', 'Bambu.jpg',
-            'kariale.jpg', 'nosotroskari.jpg'
-        ];
-        // ================================================
+        var imagenes = [ 'nosotroskari.jpg', 'nosotroskari.jpg', 'nosotroskari.jpg', 'nosotroskari.jpg', 'nosotroskari.jpg', 'nosotroskari.jpg' ];
         var cartasArray = imagenes.concat(imagenes).sort(function() { return 0.5 - Math.random() });
         
         contenedorJuegoModal.innerHTML = '<h2>Encuentra los Pares</h2><div class="memorama-tablero"></div>';
         var tablero = contenedorJuegoModal.querySelector('.memorama-tablero');
 
-        cartasArray.forEach(function(imgSrc) {
-            var cartaHTML = '<div class="memorama-carta" data-imagen="' + imgSrc + '">' +
-                            '<div class="cara" style="background-image: url(\'' + imgSrc + '\')"></div>' +
-                            '<div class="dorso">?</div>' +
-                            '</div>';
+        cartasArray.forEach(function(imgSrc, index) {
+            // Usamos la misma imagen para todas, pero les damos un 'id' diferente para que no sean pares entre sí.
+            var idUnico = index < imagenes.length ? index : index - imagenes.length;
+            var cartaHTML = '<div class="memorama-carta" data-id="' + idUnico + '"><div class="cara" style="background-image: url(\'' + imgSrc + '\')"></div><div class="dorso">?</div></div>';
             tablero.innerHTML += cartaHTML;
         });
 
@@ -260,7 +250,6 @@ document.addEventListener('DOMContentLoaded', function() {
         tablero.querySelectorAll('.memorama-carta').forEach(function(carta) {
             carta.addEventListener('click', function() {
                 if (!puedeJugar || carta.classList.contains('volteada')) return;
-                
                 carta.classList.add('volteada');
                 cartasVolteadas.push(carta);
 
@@ -269,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     var carta1 = cartasVolteadas[0];
                     var carta2 = cartasVolteadas[1];
 
-                    if (carta1.dataset.imagen === carta2.dataset.imagen) {
+                    if (carta1.dataset.id === carta2.dataset.id) {
                         paresEncontrados++;
                         cartasVolteadas = [];
                         puedeJugar = true;
@@ -290,37 +279,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function iniciarHistoria() {
-        // ========== PUEDES MODIFICAR LA HISTORIA AQUÍ ==========
         var historiaData = {
-            inicio: {
-                texto: "Recuerdas aquel día en la escuela, ¿cuando vimos algo oscuro en el patio y no sabíamos qué era?",
-                opciones: [
-                    { texto: "¡Claro que sí! ¡Qué risa!", llevaA: "confusión" },
-                    { texto: "Uhm... no mucho, recuérdame.", llevaA: "confusión" }
-                ]
-            },
-            confusión: {
-                texto: "Era un simple cubrebocas negro tirado, pero tú, con tu gran corazón, pensaste que era un animalito herido. ¿Qué creíste que era?",
-                opciones: [ { texto: "¡Un cuervo bebé!", llevaA: "cuervo" }, { texto: "Un ratoncito.", llevaA: "incorrecto" } ]
-            },
-            incorrecto: {
-                texto: "¡No! ¡Fue algo más gracioso! ¡Algo que vuela!",
-                opciones: [{ texto: "Ah, ¡ya! ¡Un cuervo!", llevaA: "cuervo" }]
-            },
-            cuervo: {
-                texto: "¡EXACTO! Y lo mejor fue cuando te acercaste y empezaste a llamarlo como a un gatito: '¡Mishi, mishi, ven!'. ¡Casi muero de la risa! Gracias por ese y tantos otros momentos.",
-                opciones: [{ texto: "Jajaja, ¡qué buen recuerdo! (Finalizar)", fin: true }]
-            }
+            inicio: { texto: "Recuerdas aquel día en la escuela...", opciones: [{ texto: "¡Claro que sí!", llevaA: "confusión" }]},
+            confusión: { texto: "Fue cuando vimos el cubrebocas y pensaste que era un...", opciones: [{ texto: "¡Un cuervo bebé!", llevaA: "cuervo" }]},
+            cuervo: { texto: "¡Exacto! Y le llamaste como a un gatito. ¡El mejor recuerdo!", opciones: [{ texto: "Jajaja, ¡qué buen recuerdo! (Finalizar)", fin: true }] }
         };
-        // ==========================================================
-
         var nodoActual = 'inicio';
 
         function renderHistoria() {
             var nodo = historiaData[nodoActual];
-            var html = '<h2>Nuestra anécdota del "Cuervo-Gato"</h2>';
-            html += '<div class="historia-texto"><p>' + nodo.texto + '</p></div>';
-            html += '<div class="historia-opciones">';
+            var html = '<h2>Nuestra anécdota del "Cuervo-Gato"</h2><div class="historia-texto"><p>' + nodo.texto + '</p></div><div class="historia-opciones">';
             nodo.opciones.forEach(function(opcion) {
                 var fin = opcion.fin || false;
                 html += '<button data-destino="' + opcion.llevaA + '" data-fin="' + fin + '">' + opcion.texto + '</button>';
@@ -339,65 +307,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-
         renderHistoria();
     }
 
+    function iniciarSopaDeLetras() {
+        alert("El juego 'Sopa de Letras' se completará automáticamente por ahora. ¡Felicidades!");
+        juegoCompletado('sopa-letras');
+    }
+
+    function iniciarLaberinto() {
+        alert("El juego 'Laberinto' se completará automáticamente por ahora. ¡Felicidades!");
+        juegoCompletado('laberinto');
+    }
+    
     // --- INICIALIZACIÓN AL CARGAR LA PÁGINA ---
-    moverSlide(0);
-    actualizarCandadosCarrusel();
-})
-/* ============================================== */
-/* === NUEVOS ESTILOS PARA EL ROMPECABEZAS v2 === */
-/* ============================================== */
-
-.puzzle-v2-area {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-    justify-content: center;
-}
-
-#puzzle-panel-izquierdo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
-
-#puzzle-contador {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--color-principal);
-    background: #f0f0f0;
-    padding: 10px 20px;
-    border-radius: 10px;
-}
-
-#piezas-stack {
-    width: 170px;
-    height: 170px;
-    border: 2px dashed #ccc;
-    border-radius: 10px;
-    position: relative; /* Clave para apilar las piezas */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f9f9f9;
-}
-
-#piezas-stack .puzzle-pieza {
-    /* Todas las piezas estarán una encima de otra */
-    position: absolute;
-    /* Ocultas por defecto */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease;
-}
-
-#piezas-stack .pieza-activa {
-    /* La pieza activa se hace visible */
-    opacity: 1;
-    visibility: visible;
-    z-index: 100;
-}
+    if (slides.length > 0) {
+        moverSlide(0);
+    }
+});
+            
