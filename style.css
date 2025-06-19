@@ -30,84 +30,87 @@ header h1 {
     font-size: 2.5rem;
 }
 
-/* Grid principal para los juegos */
-.grid-juegos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
-    padding: 25px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Tarjetas de cada juego */
-.seccion-juego {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: var(--sombra-caja);
+/* === ESTILOS PARA EL CARRUSEL === */
+.carousel-wrapper {
     position: relative;
+    width: 100%;
+    padding: 2rem 0;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-.seccion-juego:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+.carousel-container {
+    width: 100%;
+    overflow: hidden;
 }
-
-.contenido-juego {
-    padding: 20px;
-    text-align: center;
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
 }
-
-.icono-juego {
-    font-size: 3rem;
-    margin-bottom: 10px;
-}
-
-.boton-jugar {
-    background-color: var(--color-principal);
-    color: white;
-    border: none;
-    padding: 10px 20px;
+.carousel-slide {
+    flex: 0 0 60%; /* Ancho de las tarjetas */
+    max-width: 350px;
+    margin: 0 20px;
+    padding: 2rem 1.5rem;
+    background: white;
     border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+    transform: scale(0.8); /* Las tarjetas de los lados son más pequeñas */
+    opacity: 0.5; /* Y más transparentes */
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    position: relative;
 }
-
-.boton-jugar:hover {
-    background-color: #d81b60;
+.carousel-slide.active {
+    transform: scale(1.05); /* La tarjeta del centro es más grande */
+    opacity: 1;
+    z-index: 10;
 }
-
-/* Sistema de candados */
-.candado-superpuesto {
+.slide-icono {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.slide-content h2 {
+    margin-top: 0;
+}
+.slide-candado {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(50, 50, 50, 0.7);
+    color: white;
+    border-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-    backdrop-filter: blur(4px);
-}
-
-.candado-superpuesto.gris {
-    background-color: rgba(50, 50, 50, 0.7);
-}
-
-.icono-candado {
     font-size: 4rem;
-    color: rgba(0, 0, 0, 0.5);
-}
-
-.candado-superpuesto.desbloqueado {
+    z-index: 20;
     opacity: 0;
     visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
 }
+.slide-candado.visible {
+    opacity: 1;
+    visibility: visible;
+}
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--color-principal);
+    cursor: pointer;
+    z-index: 30;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.carousel-button.prev { left: 20px; }
+.carousel-button.next { right: 20px; }
 
 /* Secciones extra (Galería, Playlist, Cumplidos) */
 .secciones-extra {
@@ -115,7 +118,6 @@ header h1 {
     max-width: 900px;
     margin: 20px auto;
 }
-
 .secciones-extra section {
     background-color: white;
     padding: 25px;
@@ -124,21 +126,16 @@ header h1 {
     box-shadow: var(--sombra-caja);
     text-align: center;
 }
-
-/* Galería de Videos */
 #galeria-videos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 15px;
     margin-top: 20px;
 }
-
 #galeria-videos video {
     width: 100%;
     border-radius: 10px;
 }
-
-/* Generador de cumplidos */
 #boton-cumplido {
     background-color: var(--color-acento);
     color: white;
@@ -149,11 +146,7 @@ header h1 {
     cursor: pointer;
     transition: transform 0.2s ease;
 }
-
-#boton-cumplido:hover {
-    transform: scale(1.05);
-}
-
+#boton-cumplido:hover { transform: scale(1.05); }
 #mensaje-cumplido {
     margin-top: 20px;
     font-style: italic;
@@ -176,7 +169,7 @@ footer {
 
 /* MODAL / Ventana emergente para los juegos */
 .modal {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -187,7 +180,6 @@ footer {
     background-color: rgba(0,0,0,0.6);
     backdrop-filter: blur(5px);
 }
-
 .modal-contenido {
     background-color: #fefefe;
     margin: 5% auto;
@@ -198,7 +190,6 @@ footer {
     position: relative;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-
 .cerrar-modal {
     color: #aaa;
     position: absolute;
@@ -208,50 +199,68 @@ footer {
     font-weight: bold;
     cursor: pointer;
 }
-
 .cerrar-modal:hover,
 .cerrar-modal:focus {
     color: black;
 }
 
-/* --- ESTILOS ESPECÍFICOS DE CADA JUEGO DENTRO DEL MODAL --- */
-
-/* Rompecabezas */
-.puzzle-area { text-align: center; }
-.puzzle-contenedor {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-    margin-top: 20px;
-    align-items: center;
+/* === ESTILOS PARA EL ROMPECABEZAS === */
+.puzzle-v2-area {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
     justify-content: center;
+}
+#puzzle-panel-izquierdo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+#puzzle-contador {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-principal);
+    background: #f0f0f0;
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+#piezas-stack {
+    width: 170px;
+    height: 170px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+}
+#piezas-stack .puzzle-pieza {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+#piezas-stack .pieza-activa {
+    opacity: 1;
+    visibility: visible;
+    z-index: 100;
+    cursor: grab;
 }
 #puzzle-tablero {
     width: 450px;
     height: 450px;
-    border: 3px dashed var(--color-secundario);
+    border: 3px solid var(--color-principal);
     background-color: #f0f0f0;
     position: relative;
 }
-#piezas-contenedor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 1px solid #ccc;
-    padding: 10px;
-    height: 450px;
-    background-color: #f9f9f9;
-}
-.puzzle-pieza {
-    width: 150px;
-    height: 150px;
-    background-size: 450px 450px;
-    border: 1px solid #fff;
-    cursor: grab;
-    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+#puzzle-tablero .puzzle-pieza {
+    box-shadow: none;
 }
 
-/* Memorama */
+/* === ESTILOS PARA EL MEMORAMA (CORREGIDOS) === */
 .memorama-tablero {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -280,13 +289,13 @@ footer {
     box-shadow: var(--sombra-caja);
 }
 .cara {
+    transform: rotateY(180deg); 
     background-color: white;
     background-size: cover;
     background-position: center;
 }
 .dorso {
     background: linear-gradient(45deg, var(--color-principal), #ff4081);
-    transform: rotateY(180deg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -294,7 +303,7 @@ footer {
     color: white;
 }
 
-/* Historia */
+/* === ESTILOS PARA LA HISTORIA === */
 .historia-texto {
     background-color: #f9f9f9;
     border-left: 5px solid var(--color-secundario);
@@ -317,107 +326,4 @@ footer {
 .historia-opciones button:hover {
     background-color: var(--color-secundario);
     border-color: var(--color-principal);
-}
-/* ================================= */
-/* === ESTILOS PARA EL CARRUSEL === */
-/* ================================= */
-
-.carousel-wrapper {
-    position: relative;
-    width: 100%;
-    padding: 2rem 0;
-    overflow: hidden;
-}
-
-.carousel-container {
-    width: 100%;
-    overflow: hidden;
-}
-
-.carousel-track {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-}
-
-.carousel-slide {
-    flex: 0 0 60%; /* Ancho de las tarjetas */
-    max-width: 350px;
-    margin: 0 20px;
-    padding: 2rem 1.5rem;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    text-align: center;
-    transform: scale(0.8); /* Las tarjetas de los lados son más pequeñas */
-    opacity: 0.5; /* Y más transparentes */
-    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
-    position: relative;
-}
-
-.carousel-slide.active {
-    transform: scale(1.05); /* La tarjeta del centro es más grande */
-    opacity: 1;
-    z-index: 10;
-}
-
-.slide-icono {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.slide-content h2 {
-    margin-top: 0;
-}
-
-/* Candado para el carrusel */
-.slide-candado {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(50, 50, 50, 0.7);
-    color: white;
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 4rem;
-    z-index: 20;
-    /* Oculto por defecto */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-}
-
-.slide-candado.visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-
-/* Botones de navegación del carrusel */
-.carousel-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(255, 255, 255, 0.7);
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--color-principal);
-    cursor: pointer;
-    z-index: 30;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.carousel-button.prev {
-    left: 20px;
-}
-
-.carousel-button.next {
-    right: 20px;
 }
